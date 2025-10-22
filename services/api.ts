@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Shop, Product, Order, Analytics, OrderStatus, AffiliateLink, AffiliateLinkCreate, Blogger, BloggerCreate } from '../types';
 
-// In development, use the proxy URL, in production use the actual URL
-const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'https://deltahub-backend.onrender.com';
+// Always use /api prefix - it will be proxied in both dev and prod
+const BASE_URL = '/api';
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
