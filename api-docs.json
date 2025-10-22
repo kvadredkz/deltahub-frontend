@@ -400,6 +400,96 @@
         }
       }
     },
+    "/products/upload-image": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Upload Product Image",
+        "description": "Upload a product image",
+        "operationId": "upload_product_image_products_upload_image_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_product_image_products_upload_image_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/products/images/{filename}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Get Product Image",
+        "description": "Get a product image by filename",
+        "operationId": "get_product_image_products_images__filename__get",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Filename"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/affiliate-links/": {
       "post": {
         "tags": [
@@ -1148,6 +1238,20 @@
         ],
         "title": "Body_login_for_access_token_token_post"
       },
+      "Body_upload_product_image_products_upload_image_post": {
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image"
+        ],
+        "title": "Body_upload_product_image_products_upload_image_post"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1285,6 +1389,17 @@
             "type": "number",
             "title": "Price"
           },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
           "id": {
             "type": "integer",
             "title": "Id"
@@ -1342,6 +1457,17 @@
           "price": {
             "type": "number",
             "title": "Price"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
           },
           "shop_id": {
             "type": "integer",

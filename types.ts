@@ -22,6 +22,7 @@ export interface Product {
   description?: string;
   price: number;
   shop_id: number;
+  image_url?: string;
   created_at: string;
   updated_at: string | null;
 }
@@ -31,6 +32,7 @@ export interface ProductCreate {
   description?: string;
   price: number;
   shop_id: number;
+  image_url?: string;
 }
 
 // Order types

@@ -1,10 +1,16 @@
 import axios from 'axios';
-import { Shop, Product, Order, Analytics, OrderStatus, AffiliateLink, AffiliateLinkCreate, Blogger, BloggerCreate } from '../types';
+import { Shop, Product, ProductCreate, Order, Analytics, OrderStatus, AffiliateLink, AffiliateLinkCreate, Blogger, BloggerCreate } from '../types';
 
 // In development, use the proxy URL, in production use the actual URL
 const BASE_URL = import.meta.env.MODE === 'development' 
   ? '/api' 
   : 'https://deltahub-backend.onrender.com';
+
+export const getImageUrl = (imageUrl: string) => {
+  if (imageUrl.startsWith('http')) return imageUrl;
+  const filename = imageUrl.split('/').pop();
+  return `${BASE_URL}/products/images/${filename}`;
+};
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
@@ -63,6 +69,7 @@ axiosInstance.interceptors.response.use(
 );
 
 const api = {
+  getImageUrl,
   // Auth endpoints
   login: async (email: string, password: string): Promise<{ shop: Shop; token: string }> => {
     const formData = new URLSearchParams();
@@ -119,7 +126,19 @@ const api = {
     return response.data;
   },
 
-  createProduct: async (productData: { name: string; description?: string; price: number; shop_id: number }): Promise<Product> => {
+  uploadProductImage: async (file: File): Promise<{ image_url: string }> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await axiosInstance.post('/products/upload-image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  createProduct: async (productData: ProductCreate): Promise<Product> => {
     const response = await axiosInstance.post('/products/', productData);
     return response.data;
   },
