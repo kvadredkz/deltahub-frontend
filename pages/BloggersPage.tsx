@@ -25,6 +25,7 @@ const BloggersPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCreatingLink, setIsCreatingLink] = useState(false);
   const [linkGenerated, setLinkGenerated] = useState(false);
+  const [newLinkCode, setNewLinkCode] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,9 +60,21 @@ const BloggersPage: React.FC = () => {
     }
   };
 
-  const handleGenerateLink = () => {
+  const handleGenerateLink = async () => {
     if (!selectedBlogger || !selectedProduct) return;
-    setLinkGenerated(true);
+    setIsCreatingLink(true);
+    try {
+      const link = await api.createAffiliateLink({
+        blogger_id: selectedBlogger.id,
+        product_id: selectedProduct.id
+      });
+      setLinkGenerated(true);
+      setNewLinkCode(link.code);
+    } catch (err) {
+      setError('Failed to create affiliate link');
+    } finally {
+      setIsCreatingLink(false);
+    }
   };
 
   if (loading) {
@@ -152,7 +165,7 @@ const BloggersPage: React.FC = () => {
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
               <p className="text-sm text-green-800 font-medium">Affiliate Link Created!</p>
               <p className="mt-1 font-mono text-sm">
-                {`${window.location.origin}/#/products/${selectedProduct?.id}?bloggerId=${selectedBlogger?.id}`}
+                {`${window.location.origin}/#/products/${newLinkCode}`}
               </p>
             </div>
           )}

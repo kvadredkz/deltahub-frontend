@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, FormEvent } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Product } from '../types';
+import { Product, AffiliateLink } from '../types';
 import api from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -9,9 +9,8 @@ import Input from '../components/Input';
 import Spinner from '../components/Spinner';
 
 const ProductLandingPage: React.FC = () => {
-  const { productId } = useParams<{ productId: string }>();
-  const [searchParams] = useSearchParams();
-  const bloggerId = searchParams.get('bloggerId');
+  const { code } = useParams<{ code: string }>();
+  const [affiliateLink, setAffiliateLink] = useState<AffiliateLink | null>(null);
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,8 +22,8 @@ const ProductLandingPage: React.FC = () => {
   const [orderSuccess, setOrderSuccess] = useState(false);
 
   useEffect(() => {
-    if (!productId) {
-      setError('Product ID is missing.');
+    if (!code) {
+      setError('Affiliate link code is missing.');
       setLoading(false);
       return;
     }
@@ -32,10 +31,14 @@ const ProductLandingPage: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Get product details and track visit if blogger ID is present
+        // Get affiliate link details
+        const linkResponse = await api.getAffiliateLink(code);
+        setAffiliateLink(linkResponse);
+        
+        // Get product details (visit will be tracked through the affiliate link)
         const productResponse = await api.getProduct(
-          parseInt(productId),
-          bloggerId ? parseInt(bloggerId) : undefined
+          linkResponse.product_id,
+          linkResponse.blogger_id
         );
         setProduct(productResponse);
       } catch (err) {
@@ -46,19 +49,19 @@ const ProductLandingPage: React.FC = () => {
     };
 
     fetchData();
-  }, [productId, bloggerId]);
+  }, [code]);
 
   const handleOrderSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!productId || !bloggerId || !phoneNumber || quantity < 1) {
+    if (!affiliateLink || !phoneNumber || quantity < 1) {
       alert('Please fill in all fields correctly.');
       return;
     }
     setIsOrdering(true);
     try {
       await api.createOrder({
-        product_id: parseInt(productId),
-        blogger_id: parseInt(bloggerId),
+        product_id: affiliateLink.product_id,
+        blogger_id: affiliateLink.blogger_id,
         client_phone: phoneNumber,
         quantity: quantity,
         price_per_item: product.price,
