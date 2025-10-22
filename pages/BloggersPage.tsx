@@ -5,6 +5,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Spinner from '../components/Spinner';
+import Dialog from '../components/Dialog';
 
 const BloggersPage: React.FC = () => {
   const [bloggers, setBloggers] = useState<Blogger[]>([]);
@@ -14,6 +15,7 @@ const BloggersPage: React.FC = () => {
   
   // New blogger form
   const [isCreating, setIsCreating] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newBlogger, setNewBlogger] = useState({
     name: '',
     email: '',
@@ -53,6 +55,7 @@ const BloggersPage: React.FC = () => {
       const blogger = await api.createBlogger(newBlogger);
       setBloggers(prev => [...prev, blogger]);
       setNewBlogger({ name: '', email: '', bio: '' });
+      setIsDialogOpen(false);
     } catch (err) {
       setError('Failed to create blogger');
     } finally {
@@ -88,42 +91,41 @@ const BloggersPage: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Bloggers</h1>
+        <h1 className="text-xl font-bold text-gray-900">Bloggers</h1>
+        <Button onClick={() => setIsDialogOpen(true)}>Add Blogger</Button>
       </div>
 
-      {/* Create Blogger Form */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Add New Blogger</h2>
-        <form onSubmit={handleCreateBlogger} className="space-y-4">
-          <Input
-            id="name"
-            label="Name"
-            value={newBlogger.name}
-            onChange={e => setNewBlogger(prev => ({ ...prev, name: e.target.value }))}
-            required
-          />
-          <Input
-            id="email"
-            label="Email"
-            type="email"
-            value={newBlogger.email}
-            onChange={e => setNewBlogger(prev => ({ ...prev, email: e.target.value }))}
-            required
-          />
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Bio</label>
-            <textarea
-              value={newBlogger.bio}
-              onChange={e => setNewBlogger(prev => ({ ...prev, bio: e.target.value }))}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              rows={3}
-            />
-          </div>
-          <Button type="submit" isLoading={isCreating}>
-            Add Blogger
-          </Button>
-        </form>
-      </Card>
+      {/* Create Blogger Dialog */}
+      <Dialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        title="Add New Blogger"
+        onSubmit={handleCreateBlogger}
+      >
+        <Input
+          id="name"
+          label="Name"
+          value={newBlogger.name}
+          onChange={e => setNewBlogger(prev => ({ ...prev, name: e.target.value }))}
+          required
+        />
+        <Input
+          id="email"
+          label="Email"
+          type="email"
+          value={newBlogger.email}
+          onChange={e => setNewBlogger(prev => ({ ...prev, email: e.target.value }))}
+          required
+        />
+        <Input
+          id="bio"
+          label="Bio"
+          multiline
+          rows={3}
+          value={newBlogger.bio}
+          onChange={e => setNewBlogger(prev => ({ ...prev, bio: e.target.value }))}
+        />
+      </Dialog>
 
       {/* Create Affiliate Link */}
       <Card className="p-6">
@@ -173,17 +175,21 @@ const BloggersPage: React.FC = () => {
       </Card>
 
       {/* Bloggers List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bloggers.map(blogger => (
-          <Card key={blogger.id} className="p-6">
-            <h3 className="text-lg font-semibold text-gray-800">{blogger.name}</h3>
-            <p className="mt-1 text-sm text-gray-500">{blogger.email}</p>
-            {blogger.bio && (
-              <p className="mt-2 text-gray-600">{blogger.bio}</p>
-            )}
-          </Card>
-        ))}
-      </div>
+      {bloggers.length === 0 ? (
+        <p className="text-center text-gray-500">You have not added any bloggers yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {bloggers.map(blogger => (
+            <Card key={blogger.id} className="p-6">
+              <h3 className="text-lg font-semibold text-gray-800">{blogger.name}</h3>
+              <p className="mt-1 text-sm text-gray-500">{blogger.email}</p>
+              {blogger.bio && (
+                <p className="mt-2 text-gray-600">{blogger.bio}</p>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
