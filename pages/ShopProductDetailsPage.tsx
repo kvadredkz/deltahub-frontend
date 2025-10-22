@@ -167,7 +167,7 @@ const ShopProductDetailsPage: React.FC = () => {
                     </tr>
                   ) : analytics.map((analytic) => (
                     <tr key={analytic.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Blogger {analytic.blogger_id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{analytic.blogger?.name || `Blogger ${analytic.blogger_id}`}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.visit_count}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.order_count}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.items_sold}</td>

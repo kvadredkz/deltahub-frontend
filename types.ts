@@ -71,6 +71,7 @@ export interface Analytics {
   money_earned: number;
   created_at: string;
   updated_at: string | null;
+  blogger?: Blogger | null;
 }
 
 export interface AffiliateLink {

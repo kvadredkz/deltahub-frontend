@@ -352,6 +352,54 @@
         }
       }
     },
+    "/products/{product_id}/analytics": {
+      "get": {
+        "summary": "Get Product Analytics",
+        "operationId": "get_product_analytics_products__product_id__analytics_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Analytics"
+                  },
+                  "title": "Response Get Product Analytics Products  Product Id  Analytics Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/affiliate-links/": {
       "post": {
         "tags": [
@@ -763,54 +811,6 @@
           }
         }
       }
-    },
-    "/products/{product_id}/analytics": {
-      "get": {
-        "summary": "Get Product Analytics",
-        "operationId": "get_product_analytics_products__product_id__analytics_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "product_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Product Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Analytics"
-                  },
-                  "title": "Response Get Product Analytics Products  Product Id  Analytics Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -985,6 +985,16 @@
               }
             ],
             "title": "Updated At"
+          },
+          "blogger": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Blogger"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",

@@ -4,6 +4,7 @@ import api from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import Select from '../components/Select';
 import Spinner from '../components/Spinner';
 import Dialog from '../components/Dialog';
 
@@ -16,6 +17,7 @@ const BloggersPage: React.FC = () => {
   // New blogger form
   const [isCreating, setIsCreating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const [newBlogger, setNewBlogger] = useState({
     name: '',
     email: '',
@@ -92,7 +94,10 @@ const BloggersPage: React.FC = () => {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-900">Bloggers</h1>
-        <Button onClick={() => setIsDialogOpen(true)}>Add Blogger</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsDialogOpen(true)}>Add Blogger</Button>
+          <Button onClick={() => setIsLinkDialogOpen(true)} variant="secondary">Create Affiliate Link</Button>
+        </div>
       </div>
 
       {/* Create Blogger Dialog */}
@@ -127,69 +132,83 @@ const BloggersPage: React.FC = () => {
         />
       </Dialog>
 
-      {/* Create Affiliate Link */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Create Affiliate Link</h2>
+      {/* Create Affiliate Link Dialog */}
+      <Dialog
+        isOpen={isLinkDialogOpen}
+        onClose={() => {
+          setIsLinkDialogOpen(false);
+          setSelectedBlogger(null);
+          setSelectedProduct(null);
+          setLinkGenerated(false);
+        }}
+        title="Create Affiliate Link"
+        onSubmit={handleGenerateLink}
+      >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Blogger</label>
-            <select
-              value={selectedBlogger?.id || ''}
-              onChange={e => setSelectedBlogger(bloggers.find(b => b.id === Number(e.target.value)) || null)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            >
-              <option value="">Select a blogger</option>
-              {bloggers.map(blogger => (
-                <option key={blogger.id} value={blogger.id}>{blogger.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Select Product</label>
-            <select
-              value={selectedProduct?.id || ''}
-              onChange={e => setSelectedProduct(products.find(p => p.id === Number(e.target.value)) || null)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            >
-              <option value="">Select a product</option>
-              {products.map(product => (
-                <option key={product.id} value={product.id}>{product.name}</option>
-              ))}
-            </select>
-          </div>
-          <Button
-            onClick={handleGenerateLink}
-            disabled={!selectedBlogger || !selectedProduct}
-          >
-            Generate Link
-          </Button>
+          <Select
+            id="blogger"
+            label="Select Blogger"
+            value={selectedBlogger?.id?.toString() || ''}
+            onChange={e => setSelectedBlogger(bloggers.find(b => b.id === Number(e.target.value)) || null)}
+            options={bloggers.map(blogger => ({
+              value: blogger.id.toString(),
+              label: blogger.name
+            }))}
+          />
+          <Select
+            id="product"
+            label="Select Product"
+            value={selectedProduct?.id?.toString() || ''}
+            onChange={e => setSelectedProduct(products.find(p => p.id === Number(e.target.value)) || null)}
+            options={products.map(product => ({
+              value: product.id.toString(),
+              label: product.name
+            }))}
+          />
           {linkGenerated && (
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
               <p className="text-sm text-green-800 font-medium">Affiliate Link Created!</p>
-              <p className="mt-1 font-mono text-sm">
+              <p className="mt-1 font-mono text-sm break-all">
                 {`${window.location.origin}/#/products/${newLinkCode}`}
               </p>
             </div>
           )}
         </div>
-      </Card>
+      </Dialog>
 
       {/* Bloggers List */}
-      {bloggers.length === 0 ? (
-        <p className="text-center text-gray-500">You have not added any bloggers yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bloggers.map(blogger => (
-            <Card key={blogger.id} className="p-6">
-              <h3 className="text-lg font-semibold text-gray-800">{blogger.name}</h3>
-              <p className="mt-1 text-sm text-gray-500">{blogger.email}</p>
-              {blogger.bio && (
-                <p className="mt-2 text-gray-600">{blogger.bio}</p>
-              )}
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bio</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {bloggers.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                  You have not added any bloggers yet.
+                </td>
+              </tr>
+            ) : bloggers.map((blogger) => (
+              <tr key={blogger.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{blogger.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{blogger.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  {blogger.bio || '-'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(blogger.created_at).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
