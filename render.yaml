@@ -2,6 +2,9 @@ services:
   - type: web
     name: deltahub-frontend
     env: static
+    envVars:
+      - key: VITE_API_URL
+        value: https://deltahub-backend.onrender.com
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     routes:
