@@ -11,6 +11,8 @@ services:
       - type: rewrite
         source: /api/*
         destination: https://deltahub-backend.onrender.com/*
+        headers:
+          Content-Type: application/x-www-form-urlencoded
       - type: rewrite
         source: /*
         destination: /index.html

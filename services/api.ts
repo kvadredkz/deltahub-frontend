@@ -68,7 +68,8 @@ const api = {
     formData.append('password', password);
 
     console.log('Login request payload:', { username: email, password: '***' });
-    const response = await axiosInstance.post('/token', formData, {
+    // Override axios instance for this specific request
+    const response = await axios.post(`${BASE_URL}/token`, formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
