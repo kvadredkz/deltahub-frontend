@@ -152,7 +152,7 @@ const BloggersPage: React.FC = () => {
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
               <p className="text-sm text-green-800 font-medium">Affiliate Link Created!</p>
               <p className="mt-1 font-mono text-sm">
-                {`${window.location.origin}/products/${selectedProduct?.id}?bloggerId=${selectedBlogger?.id}`}
+                {`${window.location.origin}/#/products/${selectedProduct?.id}?bloggerId=${selectedBlogger?.id}`}
               </p>
             </div>
           )}
