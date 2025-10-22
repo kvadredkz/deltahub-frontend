@@ -81,7 +81,7 @@ const ShopProductDetailsPage: React.FC = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-      <p className="text-lg text-gray-600 mb-6">${product.price.toFixed(2)}</p>
+      <p className="text-lg text-gray-600 mb-6">₸{product.price.toFixed(2)}</p>
 
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8" aria-label="Tabs">
@@ -127,7 +127,7 @@ const ShopProductDetailsPage: React.FC = () => {
                         <tr key={order.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.client_phone}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.quantity}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(order.quantity * order.price_per_item).toFixed(2)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₸{(order.quantity * order.price_per_item).toFixed(2)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><StatusBadge status={order.status} /></td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             {order.status === OrderStatus.WaitingToProcess && (
@@ -171,7 +171,7 @@ const ShopProductDetailsPage: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.visit_count}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.order_count}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analytic.items_sold}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-semibold">${analytic.money_earned.toFixed(2)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-semibold">₸{analytic.money_earned.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

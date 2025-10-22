@@ -175,7 +175,7 @@ const ShopDashboardPage: React.FC = () => {
                   <div className="p-6 flex-grow flex flex-col">
                     <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
                     <p className="text-gray-600 mt-2 flex-grow">{product.description}</p>
-                    <p className="mt-4 text-2xl font-bold text-indigo-600">${product.price.toFixed(2)}</p>
+                    <p className="mt-4 text-2xl font-bold text-indigo-600">₸{product.price.toFixed(2)}</p>
                   </div>
                 </div>
               </Card>
